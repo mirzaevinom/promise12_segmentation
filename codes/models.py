@@ -156,8 +156,12 @@ def level_block(m, dim, depth, inc, acti, do, bn, mp, up, res):
 		m = conv_block(m, dim, acti, bn, res, do)
 	return m
 
+
+#Adopted from https://github.com/pietz/unet-keras
+
 def UNet(img_shape, out_ch=1, start_ch=64, depth=4, inc_rate=2., activation='relu',
 		 dropout=0.0, batchnorm=False, maxpool=True, upconv=False, residual=False):
+
 	i = Input(shape=img_shape)
 	o = level_block(i, start_ch, depth, inc_rate, activation, dropout, batchnorm, maxpool, upconv, residual)
 	o = Conv2D(out_ch, 1, activation='sigmoid')(o)
@@ -165,5 +169,5 @@ def UNet(img_shape, out_ch=1, start_ch=64, depth=4, inc_rate=2., activation='rel
 
 if  __name__=='__main__':
 
-    model = UNet((128, 128,1), start_ch=16, depth=5, batchnorm=False, dropout=0.0)
+    model = UNet((128, 128,1), start_ch=64, depth=3, batchnorm=True, dropout=0.3, residual=True)
     model.summary()
