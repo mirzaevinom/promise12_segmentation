@@ -40,6 +40,8 @@ def smooth_images(imgs, t_step=0.125, n_iter=5):
 
     return imgs
 
+
+
 if __name__=='__main__':
     import numpy as np
     import matplotlib.pyplot as plt
@@ -52,7 +54,11 @@ if __name__=='__main__':
         plt.imshow(img, cmap='gray')
         plt.savefig(fname, dpi=300)
 
-    img = np.load('../data/y_test.npy')[15]
+    img = np.load('../data/X_test.npy')[15]
+    # from skimage import feature
+    # img =  feature.canny(img[:,:,0], sigma=0.5)
+    img_show(img, fname='edges.png')
+
     deform = elastic_transform(img, alpha=256*1.5)
     img_show(img, fname='normal.png')
     img_show( deform, fname='deform.png')

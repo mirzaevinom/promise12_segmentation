@@ -4,57 +4,6 @@ from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspo
 from keras.layers import  merge, UpSampling2D, Dropout, Cropping2D, BatchNormalization
 from keras.initializers import RandomNormal, VarianceScaling
 
-def deepest_segmenter(img_rows, img_cols, N=3, k_size=3):
-
-    inputs = Input((img_rows, img_cols, 1))
-    conv1 = Conv2D(2**(N), k_size, activation='relu', padding='same')(inputs)
-    conv1 = Conv2D(2**(N), k_size, activation='relu', padding='same' )(conv1)
-    pool = MaxPooling2D(pool_size=(2, 2))(conv1)
-    pool = BatchNormalization()(pool)
-    # pool = Dropout(drop)(pool)
-
-    conv2 = Conv2D(2**(N+1), k_size, activation='relu', padding='same' )(pool)
-    conv2 = Conv2D(2**(N+1), k_size, activation='relu', padding='same' )(conv2)
-    pool = MaxPooling2D(pool_size=(2, 2))(conv2)
-    pool = BatchNormalization()(pool)
-    # pool = Dropout(drop)(pool)
-
-    conv3 = Conv2D(2**(N+2), k_size, activation='relu', padding='same' )(pool)
-    conv3 = Conv2D(2**(N+2), k_size, activation='relu', padding='same' )(conv3)
-    pool = MaxPooling2D(pool_size=(2, 2))(conv3)
-    pool = BatchNormalization()(pool)
-    # pool = Dropout(drop)(pool)
-
-    conv= Conv2D(2**(N+3), k_size, activation='relu', padding='same' )(pool)
-    conv= Conv2D(2**(N+3), k_size, activation='relu', padding='same' )(conv)
-
-    conv = Conv2DTranspose(2**(N+2), (2, 2), strides=(2, 2), padding='same')(conv)
-    conv = concatenate([conv, conv3], axis=3)
-    conv = Conv2D(2**(N+2), k_size, activation='relu', padding='same' )(conv)
-    conv = Conv2D(2**(N+2), k_size, activation='relu', padding='same' )(conv)
-    conv = BatchNormalization()(conv)
-    # conv = Dropout(drop)(conv)
-
-
-    conv = Conv2DTranspose(2**(N+1), (2, 2), strides=(2, 2), padding='same')(conv)
-    conv = concatenate([conv, conv2], axis=3)
-    conv = Conv2D(2**(N+1), k_size, activation='relu', padding='same' )(conv)
-    conv = Conv2D(2**(N+1), k_size, activation='relu', padding='same' )(conv)
-    conv = BatchNormalization()(conv)
-    # conv = Dropout(drop)(conv)
-
-
-    conv = Conv2DTranspose(2**(N), (2, 2), strides=(2, 2), padding='same')(conv)
-    conv = concatenate([conv, conv1], axis=3)
-    conv = Conv2D(2**(N), k_size, activation='relu', padding='same' )(conv)
-    conv = Conv2D(2**(N), k_size, activation='relu', padding='same' )(conv)
-    conv = BatchNormalization()(conv)
-    # conv = Dropout(drop)(conv)
-
-    conv = Conv2D(1, (1, 1), activation='sigmoid')(conv)
-    model = Model(inputs=[inputs], outputs=[conv])
-
-    return model
 
 def unet_depth_5(img_rows, img_cols, N=3, k_size=3):
 
@@ -169,5 +118,5 @@ def UNet(img_shape, out_ch=1, start_ch=64, depth=4, inc_rate=2., activation='rel
 
 if  __name__=='__main__':
 
-    model = UNet((128, 128,1), start_ch=64, depth=3, batchnorm=True, dropout=0.3, residual=True)
+    model = UNet((256, 256,1), start_ch=8, depth=7, batchnorm=True, dropout=0.5, upconv=True, maxpool=True, residual=False)
     model.summary()

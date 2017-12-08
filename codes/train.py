@@ -187,7 +187,7 @@ def keras_fit_generator(img_rows=96, img_cols=96, n_imgs=10**4, batch_size=32, r
     data_gen_args = dict(
         featurewise_center=False,
         featurewise_std_normalization=False,
-        rotation_range=45.,
+        rotation_range=10.,
         width_shift_range=0.1,
         height_shift_range=0.1,
         horizontal_flip=True,
@@ -206,7 +206,7 @@ def keras_fit_generator(img_rows=96, img_cols=96, n_imgs=10**4, batch_size=32, r
     mask_generator = mask_datagen.flow(y_train, batch_size=batch_size, seed=seed)
     train_generator = izip(image_generator, mask_generator)
 
-    model = UNet((img_rows, img_cols,1), start_ch=8, depth=7, batchnorm=True, dropout=0.5, residual=True)
+    model = UNet((img_rows, img_cols,1), start_ch=8, depth=7, batchnorm=True, dropout=0.5, maxpool=True, residual=True)
     # model.load_weights('../data/weights.h5')
 
     model.summary()
@@ -238,7 +238,7 @@ if __name__=='__main__':
 
     start = time.time()
     keras_fit_generator(img_rows=256, img_cols=256, regenerate=False,
-                        n_imgs=3*10**4, batch_size=32)
+                        n_imgs=15*10**4, batch_size=32)
 
     end = time.time()
 
