@@ -14,11 +14,11 @@ from functools import partial
 from itertools import izip
 
 import cv2
-import numpy as np
 from keras.optimizers import Adam, SGD
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import LearningRateScheduler, EarlyStopping
 from keras.preprocessing.image import ImageDataGenerator
+import numpy as np
 from scipy.misc import imresize
 from skimage.transform import resize
 from skimage.exposure import equalize_adapthist, equalize_hist
@@ -120,7 +120,7 @@ def load_data():
     return X_train, y_train, X_val, y_val
 
 
-def create_val_from_train(X_train, y_train, seed=10):
+def augment_validation_data(X_train, y_train, seed=10):
 
     img_rows = X_train.shape[1]
     img_cols =  X_train.shape[2]
@@ -159,14 +159,6 @@ def create_val_from_train(X_train, y_train, seed=10):
     y_val = np.concatenate(y_val, axis=0)
     return X_val, y_val
 
-# learning rate schedule
-def step_decay(epoch):
-    initial_lrate = 0.001
-    drop = 0.32
-    epochs_drop = 5
-    lrate = initial_lrate * drop**int((1 + epoch) / epochs_drop)
-    return lrate
-
 
 def keras_fit_generator(img_rows=96, img_cols=96, n_imgs=10**4, batch_size=32, regenerate=True):
 
@@ -175,7 +167,7 @@ def keras_fit_generator(img_rows=96, img_cols=96, n_imgs=10**4, batch_size=32, r
         #preprocess_data()
 
     X_train, y_train, X_val, y_val = load_data()
-    # X_val, y_val = create_val_from_train(X_val, y_val, seed=10)
+    # X_val, y_val = augment_validation_data(X_val, y_val, seed=10)
     img_rows = X_train.shape[1]
     img_cols =  X_train.shape[2]
 
@@ -214,8 +206,6 @@ def keras_fit_generator(img_rows=96, img_cols=96, n_imgs=10**4, batch_size=32, r
         '../data/weights.h5', monitor='val_loss', save_best_only=True)
 
     c_backs = [model_checkpoint]
-
-    #c_backs.append( LearningRateScheduler(step_decay) )
     c_backs.append( EarlyStopping(monitor='loss', min_delta=0.001, patience=5) )
 
     model.compile(  optimizer=Adam(lr=0.001), loss=dice_coef_loss, metrics=[dice_coef])
@@ -237,7 +227,7 @@ if __name__=='__main__':
     import time
 
     start = time.time()
-    keras_fit_generator(img_rows=256, img_cols=256, regenerate=False,
+    keras_fit_generator(img_rows=256, img_cols=256, regenerate=True,
                         n_imgs=15*10**4, batch_size=32)
 
     end = time.time()

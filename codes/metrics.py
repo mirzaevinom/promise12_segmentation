@@ -1,10 +1,9 @@
 from __future__ import division, print_function
-import numpy as np
-from scipy.ndimage import morphology
 
 from keras import backend as K
 K.set_image_data_format('channels_last')
-
+import numpy as np
+from scipy.ndimage import morphology
 
 def dice_coef(y_true, y_pred, smooth=1.0):
 
@@ -25,9 +24,11 @@ def numpy_dice(y_true, y_pred, axis=None, smooth=1.0):
 
     return ( 2. * intersection.sum(axis=axis) +smooth)/ (np.sum(y_true, axis=axis) + np.sum(y_pred, axis=axis) +smooth )
 
+
 def rel_abs_vol_diff(y_true, y_pred):
 
     return np.abs( (y_pred.sum()/y_true.sum() - 1)*100)
+
 
 def get_boundary(data, img_dim=2, shift = -1):
     data  = data>0

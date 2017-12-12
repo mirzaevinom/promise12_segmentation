@@ -6,21 +6,20 @@ Created on Fri Oct 27 2017
 """
 
 from __future__ import division, print_function
-import numpy as np
-print()
 
+import cv2
+from keras.optimizers import Adam
+import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
-from keras.optimizers import Adam
-
-from models import *
-from metrics import *
-import cv2
+import numpy as np
 import os
-import matplotlib.gridspec as gridspec
 import SimpleITK as sitk
 from skimage.transform import resize
 from skimage.measure import find_contours
+
+from models import *
+from metrics import *
 
 def make_plots(X, y, y_pred, n_best=20, n_worst=20):
     #PLotting the results'
@@ -253,7 +252,7 @@ if __name__=='__main__':
     val_list = [5,15,25,35,45]
     train_list = list( set(range(50)) - set(val_list ) )
     train_list.sort()
-    # check_predictions( val_list, plot=False)
-    # check_predictions( train_list, plot=False)
-    # predict_test()
+    check_predictions( val_list, plot=True)
+    check_predictions( train_list, plot=False)
+    predict_test()
     plot_test_samples()

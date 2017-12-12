@@ -1,9 +1,10 @@
 
 from __future__ import division, print_function
-import numpy as np
 
-import SimpleITK as sitk
 import cv2
+import numpy as np
+import SimpleITK as sitk
+
 
 def elastic_transform(image, x=None, y=None, alpha=256*3, sigma=256*0.07):
     """Elastic deformation of images as described in [Simard2003]_.
@@ -28,6 +29,10 @@ def elastic_transform(image, x=None, y=None, alpha=256*3, sigma=256*0.07):
 
 
 def smooth_images(imgs, t_step=0.125, n_iter=5):
+    """
+    Curvature driven image denoising.
+    In my experience helps significantly with segmentation.
+    """
 
     for mm in range(len(imgs)):
         img = sitk.GetImageFromArray(imgs[mm])
@@ -39,29 +44,3 @@ def smooth_images(imgs, t_step=0.125, n_iter=5):
 
 
     return imgs
-
-
-
-if __name__=='__main__':
-    import numpy as np
-    import matplotlib.pyplot as plt
-
-    plt.switch_backend('agg')
-
-
-    def img_show(img, fname='some.png'):
-        img = np.squeeze(img)
-        plt.imshow(img, cmap='gray')
-        plt.savefig(fname, dpi=300)
-
-    img = np.load('../data/X_test.npy')[15]
-    # from skimage import feature
-    # img =  feature.canny(img[:,:,0], sigma=0.5)
-    img_show(img, fname='edges.png')
-
-    deform = elastic_transform(img, alpha=256*1.5)
-    img_show(img, fname='normal.png')
-    img_show( deform, fname='deform.png')
-
-
-    print()
